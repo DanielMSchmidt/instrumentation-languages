@@ -40,7 +40,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.osgi.service.prefs.Preferences;
 
 /**
- * Generates one single files per record for java, c, and perl.
+ * Generates one single files per record for java, c, perl and javascript.
  */
 @SuppressWarnings("all")
 public class RecordLangGenerator implements IGenerator {
@@ -86,24 +86,7 @@ public class RecordLangGenerator implements IGenerator {
             TreeIterator<EObject> _allContents = resource.getAllContents();
             Iterator<RecordType> _filter = Iterators.<RecordType>filter(_allContents, RecordType.class);
             final Procedure1<RecordType> _function = (RecordType type) -> {
-              boolean _or = false;
-              boolean _supportsAbstractRecordType = cg.supportsAbstractRecordType();
-              if (_supportsAbstractRecordType) {
-                _or = true;
-              } else {
-                boolean _and = false;
-                boolean _supportsAbstractRecordType_1 = cg.supportsAbstractRecordType();
-                boolean _not = (!_supportsAbstractRecordType_1);
-                if (!_not) {
-                  _and = false;
-                } else {
-                  boolean _isAbstract = type.isAbstract();
-                  boolean _not_1 = (!_isAbstract);
-                  _and = _not_1;
-                }
-                _or = _and;
-              }
-              if (_or) {
+              if ((cg.supportsAbstractRecordType() || ((!cg.supportsAbstractRecordType()) && (!type.isAbstract())))) {
                 String _fileName = cg.getFileName(type);
                 String _outletType = cg.getOutletType();
                 String _id_1 = cg.getId();

@@ -5,7 +5,6 @@ import java.util.List;
 import kieker.develop.rl.generator.java.IRL2JavaTypeMappingExtensions;
 import kieker.develop.rl.generator.java.record.NameResolver;
 import kieker.develop.rl.recordLang.ArrayLiteral;
-import kieker.develop.rl.recordLang.ArraySize;
 import kieker.develop.rl.recordLang.BaseType;
 import kieker.develop.rl.recordLang.BooleanLiteral;
 import kieker.develop.rl.recordLang.BuiltInValueLiteral;
@@ -36,30 +35,7 @@ public class ConstantConstructionModule {
    */
   public static String createDefaultConstants(final List<Property> properties) {
     final Function1<Property, Boolean> _function = (Property it) -> {
-      boolean _or = false;
-      Literal _value = it.getValue();
-      boolean _notEquals = (!Objects.equal(_value, null));
-      if (_notEquals) {
-        _or = true;
-      } else {
-        boolean _and = false;
-        Classifier _findType = PropertyEvaluation.findType(it);
-        BaseType _type = _findType.getType();
-        String _name = _type.getName();
-        String _name_1 = BaseTypes.STRING.name();
-        boolean _equals = _name.equals(_name_1);
-        if (!_equals) {
-          _and = false;
-        } else {
-          Classifier _findType_1 = PropertyEvaluation.findType(it);
-          EList<ArraySize> _sizes = _findType_1.getSizes();
-          int _size = _sizes.size();
-          boolean _equals_1 = (_size == 0);
-          _and = _equals_1;
-        }
-        _or = _and;
-      }
-      return Boolean.valueOf(_or);
+      return Boolean.valueOf(((!Objects.equal(it.getValue(), null)) || (PropertyEvaluation.findType(it).getType().getName().equals(BaseTypes.STRING.name()) && (PropertyEvaluation.findType(it).getSizes().size() == 0))));
     };
     Iterable<Property> _filter = IterableExtensions.<Property>filter(properties, _function);
     final Function1<Property, CharSequence> _function_1 = (Property property) -> {
@@ -149,22 +125,20 @@ public class ConstantConstructionModule {
   private static CharSequence createLiteral(final Literal literal) {
     CharSequence _switchResult = null;
     boolean _matched = false;
-    if (!_matched) {
-      if (literal instanceof IntLiteral) {
-        _matched=true;
-        StringConcatenation _builder = new StringConcatenation();
-        int _value = ((IntLiteral)literal).getValue();
-        _builder.append(_value, "");
-        String _xifexpression = null;
-        BaseType _requiredType = ConstantConstructionModule.getRequiredType(literal);
-        String _name = _requiredType.getName();
-        boolean _equals = _name.equals("long");
-        if (_equals) {
-          _xifexpression = "L";
-        }
-        _builder.append(_xifexpression, "");
-        _switchResult = _builder;
+    if (literal instanceof IntLiteral) {
+      _matched=true;
+      StringConcatenation _builder = new StringConcatenation();
+      int _value = ((IntLiteral)literal).getValue();
+      _builder.append(_value, "");
+      String _xifexpression = null;
+      BaseType _requiredType = ConstantConstructionModule.getRequiredType(literal);
+      String _name = _requiredType.getName();
+      boolean _equals = _name.equals("long");
+      if (_equals) {
+        _xifexpression = "L";
       }
+      _builder.append(_xifexpression, "");
+      _switchResult = _builder;
     }
     if (!_matched) {
       if (literal instanceof FloatLiteral) {
@@ -288,13 +262,11 @@ public class ConstantConstructionModule {
     BaseType _switchResult = null;
     EObject _eContainer = literal.eContainer();
     boolean _matched = false;
-    if (!_matched) {
-      if (_eContainer instanceof Constant) {
-        _matched=true;
-        EObject _eContainer_1 = literal.eContainer();
-        Classifier _type = ((Constant) _eContainer_1).getType();
-        _switchResult = _type.getType();
-      }
+    if (_eContainer instanceof Constant) {
+      _matched=true;
+      EObject _eContainer_1 = literal.eContainer();
+      Classifier _type = ((Constant) _eContainer_1).getType();
+      _switchResult = _type.getType();
     }
     if (!_matched) {
       if (_eContainer instanceof Property) {
