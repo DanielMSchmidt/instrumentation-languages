@@ -21,11 +21,11 @@ import kieker.develop.rl.ouput.config.OutletConfiguration;
  * Configuration and registration of IRL generators.
  * The class also contains functions for derived values based on the
  * configuration values.
- * 
+ *
  * @author Reiner Jung
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public final class GeneratorConfiguration {
 	/** list of all generators to support RecordType. */
@@ -37,6 +37,7 @@ public final class GeneratorConfiguration {
 		kieker.develop.rl.generator.java.factory.RecordFactoryTypeGenerator.class,
 		kieker.develop.rl.generator.perl.RecordTypeGenerator.class,
 		kieker.develop.rl.generator.delphi.RecordTypeGenerator.class,
+		kieker.develop.rl.generator.javascript.RecordTypeGenerator.class,
 	};
 
 	/** list of all generators to support TemplateType. */
@@ -52,6 +53,7 @@ public final class GeneratorConfiguration {
 		new OutletConfiguration("c", "C Output Folder", "./src-gen/c"),
 		new OutletConfiguration("perl", "Perl Output Folder", "./src-gen/perl"),
 		new OutletConfiguration("delphi", "Delphi Output Folder", "./src-gen/delphi"),
+		new OutletConfiguration("javascript", "Javascript Output Folder", "./src-gen/javascript"),
 	};
 
 	/**

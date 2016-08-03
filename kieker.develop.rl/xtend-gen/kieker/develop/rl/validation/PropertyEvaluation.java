@@ -199,23 +199,7 @@ public class PropertyEvaluation {
    */
   public static boolean containsProperty(final List<Property> list, final Property item) {
     for (final Property p : list) {
-      boolean _and = false;
-      String _name = p.getName();
-      String _name_1 = item.getName();
-      boolean _equals = _name.equals(_name_1);
-      if (!_equals) {
-        _and = false;
-      } else {
-        Classifier _findType = PropertyEvaluation.findType(p);
-        BaseType _type = _findType.getType();
-        String _name_2 = _type.getName();
-        Classifier _findType_1 = PropertyEvaluation.findType(item);
-        BaseType _type_1 = _findType_1.getType();
-        String _name_3 = _type_1.getName();
-        boolean _equals_1 = _name_2.equals(_name_3);
-        _and = _equals_1;
-      }
-      if (_and) {
+      if ((p.getName().equals(item.getName()) && PropertyEvaluation.findType(p).getType().getName().equals(PropertyEvaluation.findType(item).getType().getName()))) {
         return true;
       }
     }
