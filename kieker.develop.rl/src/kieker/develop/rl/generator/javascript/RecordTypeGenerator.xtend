@@ -41,6 +41,8 @@ class RecordTypeGenerator extends AbstractRecordTypeGenerator {
 	override getFileName(Type type) '''«type.getDirectoryName»«File::separator»«type.name».js'''
 		
 	override getOutletType() '''javascript'''
+
+	def String fullyQualifiedName(RecordType type) '''«(type.eContainer as Model).name».«type.name»'''
 	
 	/**
 	 * Create a javascript based record for kieker
@@ -50,11 +52,10 @@ class RecordTypeGenerator extends AbstractRecordTypeGenerator {
 		'''
 		«IF (!headerComment.equals(""))»«headerComment.replace("THIS-YEAR", Calendar.getInstance().get(Calendar.YEAR).toString)»
 		«ENDIF»'use strict';
-		// It is assumed that kieker is loaded before this file
 		
-		window.kieker.recordConstructors.«type.name» = function «type.name»(record) {
+		module.exports = function get«type.name» (record) {
 			return {
-				class: ,
+				class: '«type.fullyQualifiedName»',
 				timestamp: record.timestamp,
 				values: [«PropertyEvaluation::collectAllDataProperties(type).createRecordValues»]
 			};
@@ -65,10 +66,11 @@ class RecordTypeGenerator extends AbstractRecordTypeGenerator {
 		
 	/**
 	 * Creates the values for the kieker record in the right order
+	 * TODO: cast to string
 	 */
 	def createRecordValues(Collection<Property> list) {
 		list.map[e | 
 			'''record.«e.name»'''
-		]
+		].join(', ')
 	}
 }

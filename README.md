@@ -4,7 +4,7 @@ The application and system monitoring framework Kieker(http://kieker-monitoring.
 provides measuring sensors (also called probes) to collect a wide variatey of information
 of running software systems including call traces and system utilization. While its
 main focus are JVM languages, Kieker also supports Perl and C. In addition students
-have integrated it in Delphi/Pascal, and there are realizations for C# and VisualBasic 6.
+have integrated it in Delphi/Pascal, and there are realizations for C#, VisualBasic 6 and Javascript.
 Furthermore, it supports a wide variety of aspect weaving and interceptor technologies to
 introduce monitoring code without modifiying the original applications.
 
@@ -24,3 +24,12 @@ realizes an abstraction for defining probes and allows to define point cuts
 to instruct weavers and configure interceptor configurations to integrate the probes
 into the running application.
 
+## Build the Record Languages from the Command Line
+
+1. in `kieker.develop.rl`
+	1.1 run `mvn install`
+	1.2 run `mvn build`
+2. in `kieker.develop.rl.cli`
+	1.1 run `mvn install`
+	1.2 run `mvn build`
+	1.3 run `./run-irl-compiler.sh`

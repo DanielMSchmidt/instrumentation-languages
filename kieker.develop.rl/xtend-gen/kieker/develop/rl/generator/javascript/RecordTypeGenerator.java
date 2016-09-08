@@ -104,30 +104,28 @@ public class RecordTypeGenerator extends AbstractRecordTypeGenerator {
     }
     _builder.append("\'use strict\';");
     _builder.newLineIfNotEmpty();
-    _builder.append("// It is assumed that kieker is loaded before this file");
     _builder.newLine();
-    _builder.newLine();
-    _builder.append("window.kieker.recordConstructors.");
+    _builder.append("module.exports = function get");
     String _name = type.getName();
     _builder.append(_name, "");
-    _builder.append(" = function ");
-    String _name_1 = type.getName();
-    _builder.append(_name_1, "");
-    _builder.append("(record) {");
+    _builder.append(" (record) {");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("return {");
     _builder.newLine();
     _builder.append("\t\t");
-    _builder.append("class: ,");
-    _builder.newLine();
+    _builder.append("class: \'");
+    String _name_1 = type.getName();
+    _builder.append(_name_1, "\t\t");
+    _builder.append("\',");
+    _builder.newLineIfNotEmpty();
     _builder.append("\t\t");
     _builder.append("timestamp: record.timestamp,");
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("values: [");
     List<Property> _collectAllDataProperties = PropertyEvaluation.collectAllDataProperties(type);
-    Iterable<String> _createRecordValues = this.createRecordValues(_collectAllDataProperties);
+    String _createRecordValues = this.createRecordValues(_collectAllDataProperties);
     _builder.append(_createRecordValues, "\t\t");
     _builder.append("]");
     _builder.newLineIfNotEmpty();
@@ -142,7 +140,7 @@ public class RecordTypeGenerator extends AbstractRecordTypeGenerator {
   /**
    * Creates the values for the kieker record in the right order
    */
-  public Iterable<String> createRecordValues(final Collection<Property> list) {
+  public String createRecordValues(final Collection<Property> list) {
     final Function1<Property, String> _function = (Property e) -> {
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("record.");
@@ -150,6 +148,7 @@ public class RecordTypeGenerator extends AbstractRecordTypeGenerator {
       _builder.append(_name, "");
       return _builder.toString();
     };
-    return IterableExtensions.<Property, String>map(list, _function);
+    Iterable<String> _map = IterableExtensions.<Property, String>map(list, _function);
+    return IterableExtensions.join(_map, ", ");
   }
 }
