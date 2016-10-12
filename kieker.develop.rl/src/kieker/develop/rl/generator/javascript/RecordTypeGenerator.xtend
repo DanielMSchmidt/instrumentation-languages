@@ -9,6 +9,9 @@ import kieker.develop.rl.generator.AbstractRecordTypeGenerator
 import kieker.develop.rl.validation.PropertyEvaluation
 import java.util.Collection
 import java.util.Calendar
+import kieker.develop.rl.generator.InternalErrorException
+import kieker.develop.rl.recordLang.Classifier
+import kieker.develop.rl.typing.BaseTypes
 
 /**
  * @author Daniel Schmidt
@@ -44,6 +47,20 @@ class RecordTypeGenerator extends AbstractRecordTypeGenerator {
 
 	def String fullyQualifiedName(RecordType type) '''«(type.eContainer as Model).name».«type.name»'''
 	
+	private def defaultValues(Classifier classifier) throws InternalErrorException {
+		switch (BaseTypes.getTypeEnum(classifier.type)) {
+			case STRING : '\'\''
+			case BYTE : 'undefined'
+			case SHORT : '0'
+			case INT : '0'
+			case LONG : '0'
+			case FLOAT : '0'
+			case DOUBLE : '0'
+			case CHAR : '\'\''
+			case BOOLEAN : 'false'
+		}
+	}
+	
 	/**
 	 * Create a javascript based record for kieker
 	 * TODO: Make sure that possible naming collision won't cause problems / fix them 
@@ -70,7 +87,7 @@ class RecordTypeGenerator extends AbstractRecordTypeGenerator {
 	 */
 	def createRecordValues(Collection<Property> list) {
 		list.map[e | 
-			'''record.«e.name»'''
+			'''record.«e.name» || «PropertyEvaluation::findType(e).defaultValues»'''
 		].join(', ')
 	}
 }

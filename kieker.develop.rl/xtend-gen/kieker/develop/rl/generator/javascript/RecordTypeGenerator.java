@@ -5,13 +5,18 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import kieker.develop.rl.generator.AbstractRecordTypeGenerator;
+import kieker.develop.rl.generator.InternalErrorException;
+import kieker.develop.rl.recordLang.BaseType;
+import kieker.develop.rl.recordLang.Classifier;
 import kieker.develop.rl.recordLang.Model;
 import kieker.develop.rl.recordLang.Property;
 import kieker.develop.rl.recordLang.RecordType;
 import kieker.develop.rl.recordLang.Type;
+import kieker.develop.rl.typing.BaseTypes;
 import kieker.develop.rl.validation.PropertyEvaluation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
@@ -83,6 +88,57 @@ public class RecordTypeGenerator extends AbstractRecordTypeGenerator {
     return _builder.toString();
   }
   
+  public String fullyQualifiedName(final RecordType type) {
+    StringConcatenation _builder = new StringConcatenation();
+    EObject _eContainer = type.eContainer();
+    String _name = ((Model) _eContainer).getName();
+    _builder.append(_name, "");
+    _builder.append(".");
+    String _name_1 = type.getName();
+    _builder.append(_name_1, "");
+    return _builder.toString();
+  }
+  
+  private String defaultValues(final Classifier classifier) throws InternalErrorException {
+    String _switchResult = null;
+    BaseType _type = classifier.getType();
+    BaseTypes _typeEnum = BaseTypes.getTypeEnum(_type);
+    if (_typeEnum != null) {
+      switch (_typeEnum) {
+        case STRING:
+          _switchResult = "\'\'";
+          break;
+        case BYTE:
+          _switchResult = "undefined";
+          break;
+        case SHORT:
+          _switchResult = "0";
+          break;
+        case INT:
+          _switchResult = "0";
+          break;
+        case LONG:
+          _switchResult = "0";
+          break;
+        case FLOAT:
+          _switchResult = "0";
+          break;
+        case DOUBLE:
+          _switchResult = "0";
+          break;
+        case CHAR:
+          _switchResult = "\'\'";
+          break;
+        case BOOLEAN:
+          _switchResult = "false";
+          break;
+        default:
+          break;
+      }
+    }
+    return _switchResult;
+  }
+  
   /**
    * Create a javascript based record for kieker
    * TODO: Make sure that possible naming collision won't cause problems / fix them
@@ -115,8 +171,8 @@ public class RecordTypeGenerator extends AbstractRecordTypeGenerator {
     _builder.newLine();
     _builder.append("\t\t");
     _builder.append("class: \'");
-    String _name_1 = type.getName();
-    _builder.append(_name_1, "\t\t");
+    String _fullyQualifiedName = this.fullyQualifiedName(type);
+    _builder.append(_fullyQualifiedName, "\t\t");
     _builder.append("\',");
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t");
@@ -139,14 +195,23 @@ public class RecordTypeGenerator extends AbstractRecordTypeGenerator {
   
   /**
    * Creates the values for the kieker record in the right order
+   * TODO: cast to string
    */
   public String createRecordValues(final Collection<Property> list) {
     final Function1<Property, String> _function = (Property e) -> {
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("record.");
-      String _name = e.getName();
-      _builder.append(_name, "");
-      return _builder.toString();
+      try {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("record.");
+        String _name = e.getName();
+        _builder.append(_name, "");
+        _builder.append(" || ");
+        Classifier _findType = PropertyEvaluation.findType(e);
+        String _defaultValues = this.defaultValues(_findType);
+        _builder.append(_defaultValues, "");
+        return _builder.toString();
+      } catch (Throwable _e) {
+        throw Exceptions.sneakyThrow(_e);
+      }
     };
     Iterable<String> _map = IterableExtensions.<Property, String>map(list, _function);
     return IterableExtensions.join(_map, ", ");
